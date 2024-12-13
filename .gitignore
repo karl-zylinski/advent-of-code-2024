@@ -1,0 +1,5 @@
+*.exe
+*.sublime-workspace
+*.pdb
+*.rdi
+input
