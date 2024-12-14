@@ -73,7 +73,5 @@ main :: proc() {
 		}
 	}
 
-
-	fmt.println(rules)
-	fmt.println(res)
+	fmt.println(res) // 5651
 }
