@@ -5,7 +5,7 @@ import "core:fmt"
 import "core:strconv"
 import "base:runtime"
 
-right_occurance: [99999]int
+right_occurance: [99999]u8
 
 main :: proc() {
 	context.allocator = runtime.panic_allocator()
@@ -22,7 +22,7 @@ main :: proc() {
 
 	for line in strings.split_lines_iterator(&input) {
 		l := strconv.atoi(line[:6])
-		total += l * right_occurance[l]
+		total += int(l) * int(right_occurance[l])
 	}
 
 	fmt.println(total) // 21142653
