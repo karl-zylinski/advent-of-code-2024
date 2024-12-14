@@ -11,13 +11,13 @@ main :: proc() {
 	input_data := #load("input")
 	input := string(input_data)
 
-	left: [1000]int
-	right: [1000]int
+	left: [1000]u32
+	right: [1000]u32
 	idx: int
 
 	for l in strings.split_lines_iterator(&input) {
-		left[idx] = strconv.atoi(l[:6])
-		right[idx] = strconv.atoi(l[8:])
+		left[idx] = u32(strconv.atoi(l[:6]))
+		right[idx] = u32(strconv.atoi(l[8:]))
 		idx += 1
 	}
 
@@ -26,9 +26,7 @@ main :: proc() {
 	total: int
 
 	for i in 0..<len(left) {
-		l := left[i]
-		r := right[i]
-		d := abs(r-l)
+		d := abs(int(right[i])-int(left[i]))
 		total += d
 	}
 
