@@ -1,21 +1,18 @@
 package advent
 
-import "core:os"
-import "core:strings"
 import "core:strconv"
 import "core:fmt"
-import "core:unicode"
+import "base:runtime"
 
 main :: proc() {
-	input_data, input_ok := os.read_entire_file("input")
-	assert(input_ok)
+	context.allocator = runtime.panic_allocator()
+	input_data := #load("input")
 	input := string(input_data)
-
+	li := len(input)
 	res: int
-
 	idx := 0
 
-	outer: for idx < len(input) {
+	outer: for idx < li {
 		c := input[idx]
 
 		if c == '\n' || c == '\r' {
@@ -23,13 +20,13 @@ main :: proc() {
 			continue
 		}
 
-		if idx + 4 < len(input) && input[idx:idx+4] == "mul(" {
+		if input[idx:min(idx+4, li)] == "mul(" {
 			idx += 4
 			n_start := idx
 			n1: int
 			n2: int
 
-			for ; idx < len(input); idx += 1 {
+			for ; idx < li; idx += 1 {
 				if input[idx] == ',' {
 					n1 = strconv.atoi(input[n_start:idx])
 					idx += 1
@@ -39,12 +36,13 @@ main :: proc() {
 				if input[idx] >= '0' && input[idx] <= '9' { 
 					continue
 				}
+
 				continue outer
 			}
 
 			n_start = idx
 
-			for ; idx < len(input); idx += 1 {
+			for ; idx < li; idx += 1 {
 				if input[idx] == ')' {
 					n2 = strconv.atoi(input[n_start:idx])
 					idx += 1
@@ -63,5 +61,5 @@ main :: proc() {
 		idx += 1
 	}
 
-	fmt.println(res)
+	fmt.println(res) // 167650499
 }
