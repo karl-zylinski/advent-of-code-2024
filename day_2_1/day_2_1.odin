@@ -4,36 +4,31 @@ import "core:os"
 import "core:strings"
 import "core:strconv"
 import "core:fmt"
+import "base:runtime"
 
 main :: proc() {
-	input_data, input_ok := os.read_entire_file("input")
-	assert(input_ok)
+	context.allocator = runtime.panic_allocator()
+	input_data := #load("input")
 	input := string(input_data)
-
 	num_safe: int
 
-	for l in strings.split_lines_iterator(&input) {
+	outer: for lo in strings.split_lines_iterator(&input) {
 		prev: int
-		first := true
-		safe := true
 		dir: int
-		seen_one_bad := false
 
-		ll := l
-		for ns in strings.split_iterator(&ll, " ") {
-			n := strconv.atoi(ns)
+		l := lo
+		for n_str in strings.split_iterator(&l, " ") {
+			n := strconv.atoi(n_str)
 
-			if first {
+			if prev == 0 {
 				prev = n
-				first = false
 				continue
 			}
 
 			diff := prev - n
-			bad := false
 
 			if abs(diff) < 1 || abs(diff) > 3 {
-				bad = true
+				continue outer
 			}
 
 			cur_dir := diff > 0 ? 1 : -1
@@ -42,26 +37,14 @@ main :: proc() {
 				dir = cur_dir
 			} else {
 				if dir != cur_dir {
-					bad = true
-				}
-			}
-
-			if bad {
-				if !seen_one_bad {
-					seen_one_bad = true
-					continue
-				} else {
-					safe = false
-					break
+					continue outer
 				}
 			}
 
 			prev = n
 		}
 
-		if safe {
-			num_safe += 1
-		}
+		num_safe += 1
 	}
 
 	fmt.println(num_safe)
