@@ -1,19 +1,15 @@
 package advent
 
-import "core:os"
-import "core:strings"
 import "core:strconv"
 import "core:fmt"
-import "core:unicode"
+import "base:runtime"
 
 main :: proc() {
-	input_data, input_ok := os.read_entire_file("input")
-	assert(input_ok)
+	context.allocator = runtime.panic_allocator()
+	input_data := #load("input")
 	input := string(input_data)
 	li := len(input)
-
 	res: int
-
 	idx := 0
 	enabled := true
 
@@ -47,6 +43,7 @@ main :: proc() {
 				if input[idx] >= '0' && input[idx] <= '9' { 
 					continue
 				}
+
 				continue outer
 			}
 
@@ -71,5 +68,5 @@ main :: proc() {
 		}
 	}
 
-	fmt.println(res)
+	fmt.println(res) // 95846796
 }
