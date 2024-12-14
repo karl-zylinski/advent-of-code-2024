@@ -1,14 +1,10 @@
 package advent
 
-import "core:strings"
 import "core:fmt"
+import "base:runtime"
 
 w :: 141
 h :: 141
-
-Dir :: enum {
-	N, NE, E, SE, S, SW, W, NW,
-}
 
 search :: proc(x: int, y: int, s: string) -> int {
 	get_char :: proc(x: int, y: int, s: string) -> u8 {
@@ -20,8 +16,11 @@ search :: proc(x: int, y: int, s: string) -> int {
 	}
 
 	xmas := "XMAS"
-
 	res := 8
+
+	Dir :: enum {
+		N, NE, E, SE, S, SW, W, NW,
+	}
 
 	fail: [Dir]bool
 
@@ -72,21 +71,15 @@ search :: proc(x: int, y: int, s: string) -> int {
 }
 
 main :: proc() {
+	context.allocator = runtime.panic_allocator()
 	input_data := #load("input")
 	input := string(input_data)
-	li := len(input)
 	res: int
-	ii := input
-	y: int
 	
-	for l in strings.split_lines_iterator(&ii) {
-		ll := l
-
-		for c, x in l {
+	for x in 0..<w {
+		for y in 0..<h {
 			res += search(x, y, input)
 		}
-
-		y += 1
 	}
 
 	fmt.println(res)
