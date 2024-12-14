@@ -1,10 +1,11 @@
 package advent
 
-import "core:strings"
 import "core:fmt"
+import "base:runtime"
 
 w :: 141
 h :: 141
+
 search :: proc(x: int, y: int, s: string) -> bool {
 	get_char :: proc(x: int, y: int, s: string) -> u8 {
 		if x < 0 || x >= 140 || y < 0 || y >= 140 {
@@ -28,23 +29,17 @@ search :: proc(x: int, y: int, s: string) -> bool {
 }
 
 main :: proc() {
+	context.allocator = runtime.panic_allocator()
 	input_data := #load("input")
 	input := string(input_data)
-	li := len(input)
 	res: int
-	ii := input
-	y: int
 	
-	for l in strings.split_lines_iterator(&ii) {
-		ll := l
-
-		for c, x in l {
+	for x in 0..<w {
+		for y in 0..<h {
 			if search(x, y, input) {
 				res += 1
 			}
 		}
-
-		y += 1
 	}
 
 	fmt.println(res)
