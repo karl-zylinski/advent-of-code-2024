@@ -17,7 +17,6 @@ main :: proc() {
 
 	rules: map[int]Num_Set
 	seen: Num_Set
-	seen_list: [dynamic]int
 
 	outer: for l in strings.split_lines_iterator(&ii) {
 		if l == "" {
@@ -27,18 +26,16 @@ main :: proc() {
 
 		if processing_rules {
 			key, val: int
-
 			ll := l
-			ci: int
+
 			for ns in strings.split_iterator(&ll, "|") {
-				if ci == 0 {
+				if key == 0 {
 					key = strconv.atoi(ns)
-				} else if ci == 1 {
+				} else if val == 0 {
 					val = strconv.atoi(ns)
 				} else {
 					panic("too many things on rule line")
 				}
-				ci += 1
 			}
 
 			assert(key != 0 && val != 0)
@@ -48,23 +45,27 @@ main :: proc() {
 				r = &rules[key]
 			}
 			r^ += {val}
-			fmt.println(r^)
 		} else {
 			ll := l
 			seen = {}
-			clear(&seen_list)
+			num := strings.count(ll, ",") + 1
+			nsi: int
+			mid: int
 			for ns in strings.split_iterator(&ll, ",") {
 				n := strconv.atoi(ns)
+				if nsi == num/2 {
+					mid = n
+				}
 
 				if rules[n] & seen != {} {
 					continue outer
 				}
 
 				seen += {n}
-				append(&seen_list, n)
+				nsi += 1
 			}
 
-			res += seen_list[len(seen_list)/2]
+			res += mid
 		}
 	}
 
