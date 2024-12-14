@@ -13,9 +13,10 @@ main :: proc() {
 	processing_rules := true
 	ii := input
 
-	rules: map[int][dynamic]int
+	Num_Set :: bit_set[0..=99;u128]
 
-	seen: map[int]struct{}
+	rules: map[int]Num_Set
+	seen: Num_Set
 	seen_list: [dynamic]int
 
 	outer: for l in strings.split_lines_iterator(&ii) {
@@ -46,26 +47,20 @@ main :: proc() {
 				rules[key] = {}
 				r = &rules[key]
 			}
-			append(r, val)
+			r^ += {val}
+			fmt.println(r^)
 		} else {
 			ll := l
-			ci: int
-			clear(&seen)
+			seen = {}
 			clear(&seen_list)
 			for ns in strings.split_iterator(&ll, ",") {
 				n := strconv.atoi(ns)
 
-				r := &rules[n]
-
-				if r != nil {
-					for rv in r {
-						if rv in seen {
-							continue outer
-						}
-					}
+				if rules[n] & seen != {} {
+					continue outer
 				}
 
-				seen[n] = {}
+				seen += {n}
 				append(&seen_list, n)
 			}
 
