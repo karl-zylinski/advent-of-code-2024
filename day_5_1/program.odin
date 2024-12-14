@@ -3,13 +3,15 @@ package advent
 import "core:strings"
 import "core:strconv"
 import "core:fmt"
+import "base:runtime"
 
 main :: proc() {
+	context.allocator = runtime.panic_allocator()
 	input_data := #load("input")
 	input := string(input_data)
 	res: int
 	Num_Set :: bit_set[0..=99;u128]
-	rules: map[int]Num_Set
+	rules: [99]Num_Set
 	processing_rules := true
 
 	outer: for lo in strings.split_lines_iterator(&input) {
