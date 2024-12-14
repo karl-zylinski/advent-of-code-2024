@@ -4,6 +4,9 @@ import "core:strings"
 import "core:strconv"
 import "core:fmt"
 import "base:runtime"
+import "core:slice"
+
+// THIS IS WIP AND DOES NOT WORK
 
 main :: proc() {
 	context.allocator = runtime.panic_allocator()
@@ -26,30 +29,41 @@ main :: proc() {
 			val := strconv.atoi(l[3:])
 			rules[key] += {val}
 		} else {
-			seen: Num_Set
 			num := (len(l)-2)/3+1
-			idx: int
+			items: [32]int
+			seen: Num_Set
+
+
+			for idx in 0..<num {
+				items[idx] = strconv.atoi(l[idx*3:idx*3+2])
+				seen += { items[idx] }
+			}
+
+			idx := num - 1
 			mid: int
 
-			comma_iterator := l
-			for n_str in strings.split_iterator(&comma_iterator, ",") {
-				n := strconv.atoi(n_str)
+			for ; idx >= 0; idx -= 1 {
+				n := items[idx]
 
 				if idx == num/2 {
 					mid = n
 				}
 
 				if rules[n] & seen != {} {
-					continue outer
+					slice.swap(items[:], idx - 1, idx)
+					seen -= {items[idx]}
+					continue
 				}
 
 				seen += {n}
-				idx += 1
 			}
+
+
+			fmt.println(items)
 
 			res += mid
 		}
 	}
 
-	fmt.println(res) // 5651
+	fmt.println(res)
 }
