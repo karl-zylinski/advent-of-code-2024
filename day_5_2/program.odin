@@ -6,8 +6,6 @@ import "core:fmt"
 import "base:runtime"
 import "core:slice"
 
-// THIS IS WIP AND DOES NOT WORK
-
 main :: proc() {
 	context.allocator = runtime.panic_allocator()
 	input_data := #load("input")
@@ -30,38 +28,51 @@ main :: proc() {
 			rules[key] += {val}
 		} else {
 			num := (len(l)-2)/3+1
+
+			val_first_idx: [99]int
+			slice.fill(val_first_idx[:], -1)
 			items: [32]int
-			seen: Num_Set
 
-
-			for idx in 0..<num {
-				items[idx] = strconv.atoi(l[idx*3:idx*3+2])
-				seen += { items[idx] }
-			}
-
-			idx := num - 1
+			idx := 0
 			mid: int
+			modified := false
+			items_num: int
 
-			for ; idx >= 0; idx -= 1 {
-				n := items[idx]
+			for input_idx in 0..<num {
+				n := strconv.atoi(l[input_idx*3:input_idx*3+2])
+				idx := items_num
+				must_be_before := rules[n]
+				new_idx := idx
 
-				if idx == num/2 {
-					mid = n
+				for m in must_be_before {
+					maybe_new_idx := val_first_idx[m]
+					if maybe_new_idx != -1 && maybe_new_idx < new_idx {
+						new_idx = maybe_new_idx
+					}
 				}
 
-				if rules[n] & seen != {} {
-					slice.swap(items[:], idx - 1, idx)
-					seen -= {items[idx]}
-					continue
+				if new_idx != idx {
+					copy(items[new_idx+1:], items[new_idx:])
+					modified = true
+
+					for &vfi, val in val_first_idx {
+						if vfi >= new_idx {
+							vfi += 1
+						}
+					}
 				}
 
-				seen += {n}
+				items[new_idx] = n
+				val_first_idx[n] = new_idx
+
+				items_num += 1
 			}
 
+			if modified {
+				fmt.println(items[:num])
+				res += items[num/2]
+			}
 
-			fmt.println(items)
-
-			res += mid
 		}
 	}
 
