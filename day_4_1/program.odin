@@ -3,16 +3,16 @@ package advent
 import "core:fmt"
 import "base:runtime"
 
-w :: 141
-h :: 141
+w :: 140
+h :: 140
 
 search :: proc(x: int, y: int, s: string) -> int {
 	get_char :: proc(x: int, y: int, s: string) -> u8 {
-		if x < 0 || x >= 140 || y < 0 || y >= 140 {
-			return 0
+		if x >= 0 && x < w && y >= 0 && y < h {
+			return s[y * w + x]
 		}
 
-		return s[y * w + x]
+		return 0
 	}
 
 	xmas := "XMAS"
@@ -73,7 +73,22 @@ search :: proc(x: int, y: int, s: string) -> int {
 main :: proc() {
 	context.allocator = runtime.panic_allocator()
 	input_data := #load("input")
-	input := string(input_data)
+	raw_input := string(input_data)
+	proceseed_input: [w*h]u8
+	idx: int
+
+	// Remove all those line breaks that ruin my life when I try to index this
+	// using coordinates.
+	for input_idx in 0..<len(raw_input) {
+		if raw_input[input_idx] == '\n' || raw_input[input_idx] == '\r' {
+			continue
+		}
+
+		proceseed_input[idx] = raw_input[input_idx]
+		idx += 1
+	}
+
+	input := string(proceseed_input[:])
 	res: int
 	
 	for x in 0..<w {
